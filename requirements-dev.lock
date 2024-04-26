@@ -8,6 +8,8 @@
 #   with-sources: false
 
 -e file:.
+lark==1.1.9
+    # via scratchimg
 msgspec==0.18.6
     # via scratchimg
 pillow==10.3.0

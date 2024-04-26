@@ -104,6 +104,15 @@ def main() -> None:
                     ),
                 ],
             ),
+            C(
+                styles["control"],
+                [
+                    "if",
+                    Boolean(styles["operators"], [Literal("A"), "=", Literal("a")]),
+                    "then",
+                ],
+                Stack([]),
+            ),
         ]
     )
     c = C(
@@ -112,5 +121,6 @@ def main() -> None:
         stack,
     )
     c.render(ctx, padding, padding)
-    ctx.draw.rectangle(c.bounding_box(ctx).to_bbox(padding, padding), outline="black")
+    bounding_box = c.bounding_box(ctx).outset(padding)
+    image = image.crop(bounding_box.to_bbox(0, 0))
     image.save("output.png")

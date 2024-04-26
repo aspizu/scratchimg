@@ -195,7 +195,7 @@ class Boolean(Struct):
 
 
 class Stack(Struct):
-    items: Sequence[Block]
+    items: Sequence[Block | C]
 
     def is_last(self) -> bool:
         return len(self.items) > 0 and self.items[-1].is_last
@@ -227,6 +227,9 @@ class C(Struct):
         items_bounding_box = box.bounding_box(ctx)
         stack_bounding_box = self.stack.bounding_box(ctx)
         is_stack_last = self.stack.is_last()
+        height = max(stack_bounding_box.h, ctx.style.c_min_height)
+        if not is_stack_last:
+            height -= ctx.style.tab_height + 1
         render_c(
             ctx,
             self.style,
@@ -234,7 +237,7 @@ class C(Struct):
             y,
             x + ctx.style.padding_x * 2 + items_bounding_box.w - 1,
             y + ctx.style.padding_y * 2 + items_bounding_box.h - 1,
-            stack_bounding_box.h - (0 if is_stack_last else ctx.style.tab_height + 1),
+            height,
             is_stack_last=is_stack_last,
             is_last=self.is_last,
         )
@@ -247,7 +250,11 @@ class C(Struct):
     def bounding_box(self, ctx: Context) -> BoundingBox:
         box = Box(self.items, self.style, ctx.style.gap, ctx.style.min_block_height)
         box = box.bounding_box(ctx)
-        stack_bounding_box = self.stack.bounding_box(ctx).addx(ctx.style.c_width)
+        stack_bounding_box = (
+            self.stack.bounding_box(ctx)
+            .addx(ctx.style.c_width)
+            .placey(BoundingBox(0, ctx.style.c_min_height))
+        )
         box = box.outsetx(ctx.style.padding_x).outsety(ctx.style.padding_y)
         box = box.placey(stack_bounding_box)
         if not self.stack.is_last():

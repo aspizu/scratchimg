@@ -19,6 +19,7 @@ class Style(Struct):
     literal_roundness: int = 2
     c_roundness: int = 2
     c_width: int = 16
+    c_min_height: int = 16
     tab_padding: int = 6
     tab_width: int = 8
     tab_height: int = 4
